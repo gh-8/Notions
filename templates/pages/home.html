@@ -10,8 +10,10 @@
     <div class="col-md-4 mx-auto col-10">
         <form class="form" id="notion-create-form" method="POST" action="/create-notion">
             {% csrf_token %}
+            <div class="d-none alert alert-danger" id="notion-create-form-error">
+            </div>
             <input type="hidden" value="/" name="next"/>
-            <textarea class="form-control" name="content" placeholder="Post a notion"></textarea>
+            <textarea required="required" class="form-control" name="content" placeholder="Post a notion"></textarea>
             <button type="submit" class="btn btn-primary">Notionize</button>
         </form>
     </div>
@@ -24,6 +26,17 @@
 
 
 <script>
+
+    function handleNotionFormError(msg,display){
+        var myErrorDiv=document.getElementById("notion-create-form-error")
+        if(display ===true){
+            myErrorDiv.setAttribute("class","d-block alert alert-danger");
+            myErrorDiv.innerHTML = msg;
+        }
+        else{
+            myErrorDiv.setAttribute("class","d-none alert alert-danger");
+        }
+    }
 
   function handleNotionCreateFormDidSubmit(event){
     event.preventDefault();
@@ -39,7 +52,8 @@
     xhr.setRequestHeader("HTTP_X_REQUESTED_WITH","XMLHttpRequest")
     xhr.setRequestHeader("X-Requested-With","XMLHttpRequest")
     xhr.onload = function() {
-        if (xhr.status == 201){
+        if (xhr.status === 201){
+            handleNotionFormError("",false);
             const newNotionJson = xhr.response;
             const newNotionElement = formatNotionElement(newNotionJson);
             //console.log(newNotionElement);
@@ -47,7 +61,33 @@
             notionsContainerElement.innerHTML = newNotionElement + ogHtml;
             myForm.reset();
         }
+        else if (xhr.status === 400){
+            const errorJson = xhr.response;
+            //console.log(errorJson);
+            const contentError = errorJson.content;
+            let contentErrorMsg;
+            if(contentError){
+                contentErrorMsg = contentError[0];
+                if(contentErrorMsg){
+                    handleNotionFormError(contentErrorMsg,true)
+                }
+                else{
+                    alert("Another error occured, try again.")
+                }
+            }
+            else{
+                alert("Another error occured, try again.")
+            }
+            //console.log(contentErrorMsg);
+        }
+        else if (xhr.status === 500){
+            alert("Server error, try again.");
+        }
+        xhr.onerror = function() {
+            alert("Error, try again.");
+        }
     }
+
     xhr.send(myFormData)
     //console.log(url,url)
     // for (var myItem of myFormData.entries()){
