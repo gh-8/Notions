@@ -1,11 +1,15 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse,Http404, JsonResponse
 import random
+from django.utils.http import is_safe_url
+from django.conf import settings
 
 from .models import Notion
 from .forms import NotionForm
 
 # Create your views here.
+
+ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
 def home_view(request, *args, **kwargs):
     #return HttpResponse("<h1>Here here</h1>")
@@ -42,12 +46,13 @@ def notion_list_view(request, *args, **kwargs):
     return JsonResponse(data)
 
 def notion_create_view(request, *args, **kwargs):
+    print("ajax",request.is_ajax())
     form = NotionForm(request.POST or None)
     next_url = request.POST.get("next") or None
     if form.is_valid():
         obj = form.save(commit=False)
         obj.save()
-        if next_url != None:
+        if next_url != None and is_safe_url(next_url, ALLOWED_HOSTS):
             return redirect(next_url)
         form = NotionForm()
     return render(request, 'components/form.html', context={"form": form})

@@ -8,7 +8,7 @@
 
 <div class="row mb-3">
     <div class="col-md-4 mx-auto col-10">
-        <form class="form" method="POST" action="/create-notion">
+        <form class="form" id="notion-create-form" method="POST" action="/create-notion">
             {% csrf_token %}
             <input type="hidden" value="/" name="next"/>
             <textarea class="form-control" name="content" placeholder="Post a notion"></textarea>
@@ -21,13 +21,68 @@
     <p>loading...</p>
 </div>
 
+
+
 <script>
-  const notionsElement = document.getElementById("notions");
-  const xhr = new XMLHttpRequest();
-  const method = "GET";
-  const url = "/notions";
-  const responseType = "json";
-  var likesCounter = 0;
+
+  function handleNotionCreateFormDidSubmit(event){
+    event.preventDefault();
+    const myForm = event.target;
+    const myFormData = new FormData(myForm);
+    const url = myForm.getAttribute("action")
+    const method = myForm.getAttribute("method")
+
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+    xhr.setRequestHeader("HTTP_X_REQUESTED_WITH","XMLHttpRequest")
+    xhr.setRequestHeader("X-Requested-With","XMLHttpRequest")
+    xhr.onload = function() {
+        const serverResponse = xhr.response
+        console.log(serverResponse)
+        const notionsEL = document.getElementById("notions")
+        loadNotions(notionsEL)
+    }
+    xhr.send(myFormData)
+    //console.log(url,url)
+    // for (var myItem of myFormData.entries()){
+    //     console.log(myItem);
+    // }
+
+    // console.log(event)
+  }
+
+  const notionCreatFormEl = document.getElementById("notion-create-form");
+  notionCreatFormEl.addEventListener("submit",handleNotionCreateFormDidSubmit);
+
+
+  const notionsEl = document.getElementById("notions");
+
+  function loadNotions(notionsElement){
+    const xhr = new XMLHttpRequest();
+    const method = "GET";
+    const url = "/notions";
+    const responseType = "json";
+
+    xhr.responseType = responseType;
+    xhr.open(method, url);
+    xhr.onload = function() {
+    const serverResponse = xhr.response;
+    var listedItems = serverResponse.response;
+    var finalNotionsStr = "";
+    var i = 0;
+    for (i = 0; i < listedItems.length; i++) {
+      var notionObj = listedItems[i];
+      var currentItem = formatNotionElement(notionObj);
+      finalNotionsStr = finalNotionsStr + currentItem;
+    }
+    notionsElement.innerHTML = finalNotionsStr;
+  };
+  xhr.send();
+
+  }
+
+  loadNotions(notionsEl)
+
 
   function handleDidLike(notion_id, likesCounter){
     console.log(notion_id,likesCounter)
@@ -41,20 +96,6 @@
     var formattedNotion = "<div class='col-12 col-md-10 mx-auto border rounded py-3 mb-4' id='notion-'" + notion.id + "'><p>" + notion.content + "</p><div class='btn-group'>"+ LikeBtn(notion) + "</div></div>"
     return formattedNotion
   }
-  xhr.responseType = responseType;
-  xhr.open(method, url);
-  xhr.onload = function() {
-    const serverResponse = xhr.response;
-    var listedItems = serverResponse.response;
-    var finalNotionsStr = "";
-    var i = 0;
-    for (i = 0; i < listedItems.length; i++) {
-      var notionObj = listedItems[i];
-      var currentItem = formatNotionElement(notionObj);
-      finalNotionsStr = finalNotionsStr + currentItem;
-    }
-    notionsElement.innerHTML = finalNotionsStr;
-  };
-  xhr.send();
+  
 </script>
 {% endblock content %}
