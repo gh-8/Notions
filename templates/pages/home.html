@@ -1,9 +1,14 @@
 {% extends 'base.html' %} {% block headtitle %} testing {% endblock headtitle %}
 {% block content %}
+<div class="row text-center">
+    <div class="col">
+        <h1>Welcome to Notions</h1>
+    </div>
+</div>
 
-<h1>Welcome to Notions</h1>
-
-<div id="notions">loading...</div>
+<div class="row" id="notions">
+    <p>loading...</p>
+</div>
 
 <script>
   const notionsElement = document.getElementById("notions");
@@ -22,7 +27,7 @@
   }
 
   function formatNotionElement(notion){
-    var formattedNotion = "<div class='mb-4' id='notion-'" + notion.id + "'><p>" + notion.content + "</p><div class='btn-group'>"+ LikeBtn(notion) + "</div></div>"
+    var formattedNotion = "<div class='col-12 col-md-10 mx-auto border rounded py-3 mb-4' id='notion-'" + notion.id + "'><p>" + notion.content + "</p><div class='btn-group'>"+ LikeBtn(notion) + "</div></div>"
     return formattedNotion
   }
   xhr.responseType = responseType;
