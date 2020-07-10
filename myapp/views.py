@@ -38,7 +38,7 @@ def notion_detail_view(request, notion_id, *args, **kwargs):
 
 def notion_list_view(request, *args, **kwargs):
     query_set = Notion.objects.all()
-    notion_list = [{"id": x.id, "content":x.content, "likes": random.randint(0,100)} for x in query_set]
+    notion_list = [x.serialize() for x in query_set]
     data = {
         "isUser": False,
         "response": notion_list
@@ -46,12 +46,14 @@ def notion_list_view(request, *args, **kwargs):
     return JsonResponse(data)
 
 def notion_create_view(request, *args, **kwargs):
-    print("ajax",request.is_ajax())
+    # print("ajax",request.is_ajax())
     form = NotionForm(request.POST or None)
     next_url = request.POST.get("next") or None
     if form.is_valid():
         obj = form.save(commit=False)
         obj.save()
+        if request.is_ajax():
+            return JsonResponse(obj.serialize(),status=201)
         if next_url != None and is_safe_url(next_url, ALLOWED_HOSTS):
             return redirect(next_url)
         form = NotionForm()
