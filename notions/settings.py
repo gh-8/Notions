@@ -125,3 +125,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        #'rest_framework.authentication.BasicAuthentication',#https://www.django-rest-framework.org/api-guide/authentication/
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+     'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        #'rest_framework.renderers.BrowsableAPIRenderer', #https://www.django-rest-framework.org/api-guide/renderers/
+    ]
+}
