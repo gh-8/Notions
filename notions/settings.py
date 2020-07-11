@@ -126,13 +126,19 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+DEFAULT_RENDERER_CLASSES=[
+    'rest_framework.renderers.JSONRenderer',
+]
+
+if DEBUG:
+    DEFAULT_RENDERER_CLASSES += [
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         #'rest_framework.authentication.BasicAuthentication',#https://www.django-rest-framework.org/api-guide/authentication/
         'rest_framework.authentication.SessionAuthentication',
     ],
-     'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-        #'rest_framework.renderers.BrowsableAPIRenderer', #https://www.django-rest-framework.org/api-guide/renderers/
-    ]
+    'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES
 }

@@ -31,6 +31,19 @@ def notion_detail_view(request, notion_id, *args, **kwargs):
     serializer = NotionSerializer(obj)
     return Response(serializer.data, status=200)
 
+@api_view(['DELETE','POST']) #method the client send is delete or post
+@permission_classes([IsAuthenticated]) #user needs to be authenticated
+def notion_delete_view(request, notion_id, *args, **kwargs):
+    query_set = Notion.objects.filter(id=notion_id)
+    if not query_set.exists():
+        return Response({},status=404)
+    query_set = query_set.filter(user=request.user)
+    if not query_set.exists():
+        return Response({"message":"you cannot delete this notion"},status=404)
+    obj = query_set.first()
+    obj.delete()
+    return Response({"message":"Notion deleted"}, status=200)
+
 @api_view(['GET']) #method the client send is get
 def notion_list_view(request, *args, **kwargs):
     query_set = Notion.objects.all()
