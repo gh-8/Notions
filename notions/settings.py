@@ -28,6 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
 LOGIN_URL = "/login"
+MAX_NOTION_LENGTH = 240
 
 
 # Application definition

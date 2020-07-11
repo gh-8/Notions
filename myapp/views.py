@@ -3,6 +3,7 @@ from django.http import HttpResponse,Http404, JsonResponse
 import random
 from django.utils.http import is_safe_url
 from django.conf import settings
+from .serializers import NotionSerializer
 
 from .models import Notion
 from .forms import NotionForm
@@ -46,6 +47,14 @@ def notion_list_view(request, *args, **kwargs):
     return JsonResponse(data)
 
 def notion_create_view(request, *args, **kwargs):
+    serializer = NotionSerializer(data=request.POST or None)
+    if serializer.is_valid():
+        obj = serializer.save(user=request.user)
+        return JsonResponse(serializer.data, status = 201)
+    return JsonResponse({},status=400)
+
+
+def notion_create_view_pure_django(request, *args, **kwargs):
     # print("ajax",request.is_ajax())
     user = request.user
     if not request.user.is_authenticated:
