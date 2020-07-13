@@ -10,6 +10,7 @@ class NotionLike(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
 class Notion(models.Model):
+    parent=models.ForeignKey("self",null=True,on_delete=models.SET_NULL)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     likes = models.ManyToManyField(User,related_name='notion_user', blank=True, through=NotionLike)
     content = models.TextField(blank=True, null=True)
@@ -20,7 +21,7 @@ class Notion(models.Model):
         return self.content
 
     class Meta:
-        ordering: ['-id']
+        ordering= ['-id']
 
     def serialize(self):
         return{
