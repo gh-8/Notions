@@ -29,6 +29,8 @@ DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1']
 LOGIN_URL = "/login"
 MAX_NOTION_LENGTH = 240
+TWEET_ACTION_OPTIONS = ["like","unlike","share"]
+
 
 
 # Application definition

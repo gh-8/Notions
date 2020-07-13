@@ -11,9 +11,13 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
+        migrations.RemoveField(
             model_name='notion',
             name='likes',
-            field=models.ManyToManyField(blank=True, related_name='notion_user', through='myapp.NotionLike', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='notion',
+            name='likes',
+            field=models.ManyToManyField(related_name='notion_user', through='myapp.NotionLike', to=settings.AUTH_USER_MODEL),
         ),
     ]

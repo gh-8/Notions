@@ -4,7 +4,7 @@ import random
 from django.utils.http import is_safe_url
 from django.conf import settings
 
-from .serializers import NotionSerializer
+from .serializers import NotionSerializer, NotionActionSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
@@ -59,6 +59,32 @@ def notion_create_view(request, *args, **kwargs):
         serializer.save(user=request.user)
         return Response(serializer.data, status=201)
     return Response({},status=400)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def notion_like_toggle_view(request, *args, **kwargs):
+    '''
+    pre: id is required, user is logged in
+    Action options are: like, unlike, share
+    '''
+    serializer = NotionActionSerializer(request.POST)
+    if serializer.is_valid(raise_exception=True):
+        data = serializer.validated_data
+        notion_id = data.get("id")
+        action = data.get("action")
+
+        qs = Notion.objects.filter(id=notion_id)
+        if not qs.exists():
+            return Response({},status=404)
+        obj.qs.first()
+        if action == "like":
+            obj.likes.add(request.user)
+        elif action=="unlike":
+            obj.likes.remove(request.user)
+        elif action == "share":
+            pass #todo
+
+    return Response({"message": "Notion"},status=200)`
 
 def notion_detail_view_pure_django(request, notion_id, *args, **kwargs):
     """
