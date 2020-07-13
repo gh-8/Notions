@@ -62,12 +62,12 @@ def notion_create_view(request, *args, **kwargs):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def notion_like_toggle_view(request, *args, **kwargs):
+def notion_action_view(request, *args, **kwargs):
     '''
     pre: id is required, user is logged in
     Action options are: like, unlike, share
     '''
-    serializer = NotionActionSerializer(request.POST)
+    serializer = NotionActionSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         data = serializer.validated_data
         notion_id = data.get("id")
@@ -76,15 +76,18 @@ def notion_like_toggle_view(request, *args, **kwargs):
         qs = Notion.objects.filter(id=notion_id)
         if not qs.exists():
             return Response({},status=404)
-        obj.qs.first()
+        obj=qs.first()
         if action == "like":
             obj.likes.add(request.user)
+            serializer = NotionSerializer(obj)
+            return Response(serializer.data,status=200)
+
         elif action=="unlike":
             obj.likes.remove(request.user)
         elif action == "share":
             pass #todo
 
-    return Response({"message": "Notion"},status=200)`
+    return Response({},status=200)
 
 def notion_detail_view_pure_django(request, notion_id, *args, **kwargs):
     """

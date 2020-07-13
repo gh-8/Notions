@@ -1,5 +1,5 @@
 from django.db import models
-import random
+from random import randint
 from django.conf import settings 
 
 User = settings.AUTH_USER_MODEL
@@ -26,5 +26,5 @@ class Notion(models.Model):
         return{
             "id": self.id,
             "content": self.content,
-            "likes": random.randint(0,120)
+            "likes": randint(0,100)
         }
