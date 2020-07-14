@@ -10,9 +10,10 @@ User = get_user_model()
 class NotionTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser',password='somepw')
+        self.user2 = User.objects.create_user(username='testuser2',password='somepw2')
         Notion.objects.create(content="my first notion", user=self.user)
         Notion.objects.create(content="my second notion", user=self.user)
-        Notion.objects.create(content="my third notion", user=self.user)
+        Notion.objects.create(content="my third notion", user=self.user2)
         self.currentCount = Notion.objects.all().count()
 
 
@@ -82,3 +83,13 @@ class NotionTestCase(TestCase):
         data = response.json()
         _id = data.get("id")
         self.assertEqual(_id, 1)
+
+    def test_notion_delete_api_view(self):
+        client = self.get_client()
+        response = client.delete("/api/notions/1/delete/")
+        self.assertEqual(response.status_code, 200)
+        client = self.get_client()
+        response = client.delete("/api/notions/1/delete/")
+        self.assertEqual(response.status_code, 404)
+        response_incorrect_owner = client.delete("/api/notions/3/delete/")
+        self.assertEqual(response_incorrect_owner.status_code, 401)
