@@ -82,11 +82,13 @@ def notion_action_view(request, *args, **kwargs):
             return Response(serializer.data, status=200)
         elif action == "unlike":
             obj.likes.remove(request.user)
+            serializer = NotionSerializer(obj)
+            return Response(serializer.data, status=200)
         elif action == "share":
             new_notion = Notion.objects.create(
                 user=request.user, parent=obj, content=content)
             serializer = NotionSerializer(new_notion)
-            return Response(serializer.data, status=200)
+            return Response(serializer.data, status=201)
     return Response({}, status=200)
 
 def notion_create_view_pure_django(request, *args, **kwargs):
