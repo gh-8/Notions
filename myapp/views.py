@@ -1,5 +1,5 @@
 import random
-from .serializers import NotionSerializer, NotionActionSerializer
+from .serializers import NotionSerializer, NotionActionSerializer, NotionCreateSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.authentication import SessionAuthentication
@@ -10,6 +10,7 @@ from django.shortcuts import render, redirect
 from django.utils.http import is_safe_url
 from .models import Notion
 from .forms import NotionForm
+
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
 # Create your views here.
@@ -20,7 +21,7 @@ def home_view(request, *args, **kwargs):
 @api_view(['POST'])  # http method that the client has to send is === POST
 @permission_classes([IsAuthenticated])
 def notion_create_view(request, *args, **kwargs):
-    serializer = NotionSerializer(data=request.POST)
+    serializer = NotionCreateSerializer(data=request.POST)
     if serializer.is_valid(raise_exception=True):
         serializer.save(user=request.user)
         return Response(serializer.data, status=201)
@@ -83,7 +84,7 @@ def notion_action_view(request, *args, **kwargs):
             obj.likes.remove(request.user)
         elif action == "share":
             new_notion = Notion.objects.create(
-                user=request.user, parent=obj, content=content,)
+                user=request.user, parent=obj, content=content)
             serializer = NotionSerializer(new_notion)
             return Response(serializer.data, status=200)
     return Response({}, status=200)

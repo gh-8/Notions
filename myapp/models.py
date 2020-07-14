@@ -22,6 +22,11 @@ class Notion(models.Model):
 
     class Meta:
         ordering= ['-id']
+    
+    @property
+    def is_share(self):
+        return self.parent != None
+
 
     def serialize(self):
         return{
