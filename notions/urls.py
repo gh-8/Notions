@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 
 from myapp.views import home_view, notion_detail_view, notion_list_view, notion_create_view, notion_delete_view, notion_action_view
 
@@ -24,6 +24,7 @@ urlpatterns = [
     path('notions', notion_list_view),
     path('create-notion', notion_create_view),
     path('notions/<int:notion_id>', notion_detail_view),
-    path('api/notions/action',notion_action_view),
-    path('api/notions/<int:notion_id>/delete', notion_delete_view),
+    #path('api/notions/action',notion_action_view),
+    #path('api/notions/<int:notion_id>/delete', notion_delete_view),
+    path('api/notions/', include('myapp.urls'))
 ]
