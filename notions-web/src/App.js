@@ -18,6 +18,16 @@ const loadNotions = function (callback) {
   xhr.send();
 };
 
+function ActionBtn(props) {
+  const { notion, action } = props;
+  const className = props.className
+    ? props.className
+    : "btn btn-primary btn-sm";
+  return action.type === "like" ? (
+    <button className={className}> +{notion.id} Likes</button>
+  ) : null;
+}
+
 function Notion(props) {
   const { notion } = props;
   const className = props.className
@@ -28,6 +38,10 @@ function Notion(props) {
       <p>
         {notion.id} - {notion.content}
       </p>
+      <div className="btn btn-group">
+        <ActionBtn notion={notion} action={{ type: "like" }} />
+        <ActionBtn notion={notion} action={{ type: "unlike" }} />
+      </div>
     </div>
   );
 }
@@ -36,7 +50,6 @@ function App() {
   const [notions, setNotions] = useState([]);
   useEffect(() => {
     const myCallback = (response, status) => {
-      console.log(response, status);
       if (status === 200) {
         setNotions(response);
       } else {
