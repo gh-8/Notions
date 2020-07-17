@@ -17,6 +17,21 @@ const loadNotions = function (callback) {
   };
   xhr.send();
 };
+
+function Notion(props) {
+  const { notion } = props;
+  const className = props.className
+    ? props.className
+    : "col-10 mx-auto col-md-6";
+  return (
+    <div className={className}>
+      <p>
+        {notion.id} - {notion.content}
+      </p>
+    </div>
+  );
+}
+
 function App() {
   const [notions, setNotions] = useState([]);
   useEffect(() => {
@@ -37,11 +52,17 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <p>
-          {notions.map((notion, index) => {
-            return <li>{notion.content}</li>;
+        <div>
+          {notions.map((item, index) => {
+            return (
+              <Notion
+                notion={item}
+                className="my-5 py-5 border bg-white text-dark"
+                key={`${index}-{item.id}`}
+              />
+            );
           })}
-        </p>
+        </div>
         <a
           className="App-link"
           href="https://reactjs.org"
