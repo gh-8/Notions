@@ -26,7 +26,7 @@ SECRET_KEY = 'mmcx$09p8e=ctgp1)e^*_*b_#9kby*0t#q66_w^)64%1c=&gj5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1','localhost']
 LOGIN_URL = "/login"
 MAX_NOTION_LENGTH = 240
 TWEET_ACTION_OPTIONS = ["like","unlike","share"]
@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # third party apps
     'rest_framework',
+    'corsheaders',
+    'rest_framework.authtoken',
     # internal apps
     'myapp',
 ]
@@ -51,6 +53,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -128,6 +131,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+CORS_ORIGIN_ALLOW_ALL = True #any website can access the api
+CORS_URLS_REGEX = r'^/api/.*$'
+
 DEFAULT_RENDERER_CLASSES=[
     'rest_framework.renderers.JSONRenderer',
 ]
@@ -141,6 +147,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         #'rest_framework.authentication.BasicAuthentication',#https://www.django-rest-framework.org/api-guide/authentication/
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
-    'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES
+    'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated'
+    ),
 }
