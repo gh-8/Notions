@@ -1,6 +1,35 @@
 import React, { useEffect, useState } from "react";
 
 import { loadNotions } from "../lookup";
+//import { NotionsList } from ".";
+
+export function NotionsComponent(props) {
+  const textAreaRef = React.createRef();
+  const handleSubmit = event => {
+    event.preventDefault();
+    const newVal = textAreaRef.current.value;
+    textAreaRef.current.value = "";
+  };
+  return (
+    <div className={props.className}>
+      <div className="col-12 mb-3">
+        <form onSubmit={handleSubmit}>
+          <textarea
+            ref={textAreaRef}
+            required={true}
+            className="form-control"
+            placeholder="Post a notion"
+            name="notion"
+          ></textarea>
+          <button type="submit" className="btn btn-primary my-3">
+            Notionize
+          </button>
+        </form>
+      </div>
+      <NotionsList />
+    </div>
+  );
+}
 
 export function NotionsList(props) {
   const [notions, setNotions] = useState([]);

@@ -1,3 +1,3 @@
-import { ActionBtn, Notion, NotionsList } from "./components";
+import { ActionBtn, Notion, NotionsList, NotionsComponent } from "./components";
 
-export { ActionBtn, Notion, NotionsList };
+export { ActionBtn, Notion, NotionsList, NotionsComponent };
