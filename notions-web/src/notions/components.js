@@ -42,6 +42,7 @@ export function NotionsComponent(props) {
 export function NotionsList(props) {
   const [notionsInit, setNotionsInit] = useState([]);
   const [notions, setNotions] = useState([]);
+  const [notionsDidSet, setNotionsDidSet] = useState(false);
   useEffect(() => {
     const final = [...props.newNotions].concat(notionsInit);
     if (final.length !== notions.length) {
@@ -50,15 +51,18 @@ export function NotionsList(props) {
   }, [props.newNotions, notions, notionsInit]);
 
   useEffect(() => {
-    const myCallback = (response, status) => {
-      if (status === 200) {
-        setNotionsInit(response);
-      } else {
-        console.log("There was an error");
-      }
-    };
-    loadNotions(myCallback);
-  }, [notionsInit]);
+    if (notionsDidSet === false) {
+      const myCallback = (response, status) => {
+        if (status === 200) {
+          setNotionsInit(response);
+          setNotionsDidSet(true);
+        } else {
+          console.log("There was an error");
+        }
+      };
+      loadNotions(myCallback);
+    }
+  }, [notionsInit, notionsDidSet, setNotionsDidSet]);
 
   return notions.map((item, index) => {
     return (
