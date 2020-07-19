@@ -18,9 +18,14 @@ from django.urls import path, re_path, include
 
 from myapp.views import home_view, notion_detail_view, notion_list_view, notion_create_view, notion_delete_view, notion_action_view
 
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.generic import TemplateView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_view),
+    path('react/', TemplateView.as_view(template_name='react.html')),
     path('notions', notion_list_view),
     path('create-notion', notion_create_view),
     path('notions/<int:notion_id>', notion_detail_view),
@@ -28,3 +33,6 @@ urlpatterns = [
     #path('api/notions/<int:notion_id>/delete', notion_delete_view),
     path('api/notions/', include('myapp.urls'))
 ]
+
+if settings.DEBUG:
+    urlpatterns +=static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
